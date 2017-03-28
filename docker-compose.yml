@@ -14,7 +14,6 @@ services:
       - ./docker/php/drupal.ini:/etc/php/7.0/cli/conf.d/drupal.ini
       - ./docker/php/drupal.ini:/etc/php/7.0/apache2/conf.d/drupal.ini
       - ./code:/var/www/html:rw
-      - ./files:/var/www/html/sites/default/files:rw
     links:
       - db
     depends_on:
