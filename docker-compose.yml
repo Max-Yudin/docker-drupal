@@ -1,5 +1,3 @@
-# docker-compose --file ./docker-compose.yml up --build --force-recreate
-# docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
 version: '2'
 services:
   web:
@@ -7,22 +5,17 @@ services:
     stdin_open: true
     restart: always
     build: ./docker/apache
+    expose:
+      - "80"
+      - "3307"
     ports:
-      - "8082:80"
+      - "8082:80" # HTTP
+      - "3307:3306" #MYSQL
     volumes:
-      - ./docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+#      - ./docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/nginx/drupal.conf:/etc/nginx/sites-enabled/drupal.conf
+      - ./docker/misc/start.sh:/start.sh
       - ./docker/php/drupal.ini:/etc/php/7.0/cli/conf.d/drupal.ini
-      - ./docker/php/drupal.ini:/etc/php/7.0/apache2/conf.d/drupal.ini
-      - ./code:/var/www/html:rw
-    links:
-      - db
-    depends_on:
-      - db
-    working_dir: /var/www/html
-  db:
-    image: mysql
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: d7
+      - ./docker/php/drupal.ini:/etc/php/7.0/fpm/conf.d/drupal.ini
+      - ./code:/var/www/drupal
+    working_dir: /var/www/drupal
